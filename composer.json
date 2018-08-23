@@ -3,7 +3,14 @@
     "description": "Maleficarum storage component.",
     "license": "proprietary",
     "require": {
-        "php": "^7.2"
+        "php": "^7.2",
+        "maleficarum/ioc": "^2.0",
+        "maleficarum/config": "^4.0",
+        "maleficarum/data": "dev-master"
+    },
+    "suggest": {
+        "ext-pgsql": "In order to use PostgreSQL as a data storage.",
+        "ext-redis": "In order to use Redis as a data storage."
     },
     "autoload": {
         "psr-4": {
