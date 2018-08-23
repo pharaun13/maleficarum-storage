@@ -1,0 +1,13 @@
+{
+    "name": "maleficarum/storage",
+    "description": "Maleficarum storage component.",
+    "license": "proprietary",
+    "require": {
+        "php": "^7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Maleficarum\\Storage\\": "src/Storage/"
+        }
+    }
+}
