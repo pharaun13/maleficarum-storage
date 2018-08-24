@@ -6,10 +6,10 @@ declare (strict_types=1);
 
 namespace Maleficarum\Storage\Repository\Postgresql;
 
-class Model implements \Maleficarum\Storage\Repository\Model {
+class Model implements \Maleficarum\Storage\Repository\ModelInterface {
     /* ------------------------------------ Class Traits START ----------------------------------------- */
     
-    use \Maleficarum\Storage\Dependant;
+    use \Maleficarum\Storage\DependantTrait;
     
     /* ------------------------------------ Class Traits END ------------------------------------------- */
     
@@ -18,7 +18,7 @@ class Model implements \Maleficarum\Storage\Repository\Model {
     /**
      * @see \Maleficarum\Storage\Repository\Model.create()
      */
-    public function create(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\Model {
+    public function create(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\ModelInterface {
         // connect to shard if necessary
         $shard = $this->getStorage()->fetchShard('Postgresql', $model->getShardRoute());
         $shard->isConnected() or $shard->connect();
@@ -66,7 +66,7 @@ class Model implements \Maleficarum\Storage\Repository\Model {
     /**
      * @see \Maleficarum\Storage\Repository\Model.read()
      */
-    public function read(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\Model {
+    public function read(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\ModelInterface {
         // connect to shard if necessary
         $shard = $this->getStorage()->fetchShard('Postgresql', $model->getShardRoute());
         $shard->isConnected() or $shard->connect();
@@ -91,7 +91,7 @@ class Model implements \Maleficarum\Storage\Repository\Model {
     /**
      * @see \Maleficarum\Storage\Repository\Model.update()
      */
-    public function update(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\Model {
+    public function update(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\ModelInterface {
         // connect to shard if necessary
         $shard = $this->getStorage()->fetchShard('Postgresql', $model->getShardRoute());
         $shard->isConnected() or $shard->connect();
@@ -133,7 +133,7 @@ class Model implements \Maleficarum\Storage\Repository\Model {
     /**
      * @see \Maleficarum\Storage\Repository\Model.delete()
      */
-    public function delete(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\Model {
+    public function delete(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\ModelInterface {
         // connect to shard if necessary
         $shard = $this->getStorage()->fetchShard('Postgresql', $model->getShardRoute());
         $shard->isConnected() or $shard->connect();

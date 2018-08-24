@@ -6,7 +6,7 @@ declare (strict_types=1);
 
 namespace Maleficarum\Storage\Shard\Redis;
 
-class Connection implements \Maleficarum\Storage\Shard\Shard {
+class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
     
     /* ------------------------------------ Class Property START --------------------------------------- */
     
@@ -93,9 +93,9 @@ class Connection implements \Maleficarum\Storage\Shard\Shard {
     /* ------------------------------------ Connection methods START ----------------------------------- */
     
     /**
-     * @see \Maleficarum\Storage\Shard\Shard.connect()
+     * @see \Maleficarum\Storage\Shard\ShardInterface.connect()
      */
-    public function connect() : \Maleficarum\Storage\Shard\Shard {
+    public function connect() : \Maleficarum\Storage\Shard\ShardInterface {
         $connection = $this->connection;
 
         if ($connection->isConnected()) {
@@ -109,6 +109,13 @@ class Connection implements \Maleficarum\Storage\Shard\Shard {
         }
 
         return $this;
+    }
+    
+    /**
+     * @see \Maleficarum\Storage\Shard\ShardInterface.isConnected()
+     */
+    public function isConnected(): bool {
+        return $this->connection->isConnected();
     }
     
     /* ------------------------------------ Connection methods END ------------------------------------- */

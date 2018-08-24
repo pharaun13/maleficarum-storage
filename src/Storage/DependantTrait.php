@@ -6,7 +6,7 @@ declare (strict_types=1);
 
 namespace Maleficarum\Storage;
 
-trait Dependant {
+trait DependantTrait {
 
     /* ------------------------------------ Class Property START --------------------------------------- */
 

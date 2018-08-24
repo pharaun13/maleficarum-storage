@@ -6,7 +6,7 @@ declare (strict_types=1);
 
 namespace Maleficarum\Storage\Shard\Postgresql;
 
-class Connection implements \Maleficarum\Storage\Shard\Shard {
+class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
     /* ------------------------------------ Class Property START --------------------------------------- */
 
     /**
@@ -103,9 +103,9 @@ class Connection implements \Maleficarum\Storage\Shard\Shard {
     /* ------------------------------------ Class Methods START ---------------------------------------- */
 
     /**
-     * @see \Maleficarum\Storage\Shard\Shard.connect()
+     * @see \Maleficarum\Storage\Shard\ShardInterface.connect()
      */
-    public function connect(): \Maleficarum\Storage\Shard\Shard {
+    public function connect(): \Maleficarum\Storage\Shard\ShardInterface {
         if ($this->connection instanceof \PDO) {
             return $this;
         }
@@ -123,9 +123,7 @@ class Connection implements \Maleficarum\Storage\Shard\Shard {
     }
     
     /**
-     * Check if this wrapper is connected to a database engine.
-     * 
-     * @returns bool
+     * @see \Maleficarum\Storage\Shard\ShardInterface.isConnected()
      */
     public function isConnected(): bool {
         return !is_null($this->connection);

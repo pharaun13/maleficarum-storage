@@ -6,40 +6,39 @@ declare (strict_types=1);
 
 namespace Maleficarum\Storage\Repository;
 
-interface Model {
+interface ModelInterface {
     /**
      * Persist the specified model a new storage layer entity.
      *
      * @param \Maleficarum\Data\Model\Persistable\AbstractModel $model
-     * @return \Maleficarum\Storage\Repository\Model
+     * @return \Maleficarum\Storage\Repository\ModelInterface
      */
-    public function create(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\Model;
+    public function create(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\ModelInterface;
 
     /**
      * Fill the specified model with data recovered from an existing storage layer entity.
      *
      * @param \Maleficarum\Data\Model\Persistable\AbstractModel $model
-     * @return \Maleficarum\Storage\Repository\Model
+     * @return \Maleficarum\Storage\Repository\ModelInterface
      */
-    public function read(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\Model;
+    public function read(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\ModelInterface;
 
     /**
      * Update an exiting storage layer entity using the specified model.
      *
      * @param \Maleficarum\Data\Model\Persistable\AbstractModel $model
-     * @return \Maleficarum\Storage\Repository\Model
+     * @return \Maleficarum\Storage\Repository\ModelInterface
      */
-    public function update(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\Model;
+    public function update(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\ModelInterface;
 
     /**
      * Delete an existing storage layer entity based on the specified model object.
      * 
      * @param \Maleficarum\Data\Model\Persistable\AbstractModel $model
-     * @return \Maleficarum\Storage\Repository\Model
+     * @return \Maleficarum\Storage\Repository\ModelInterface
      */
-    public function delete(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\Model;
-
-
+    public function delete(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\ModelInterface;
+    
     /**
      * Perform final data transformation before the retrieved data is merged back into the model object.
      * 

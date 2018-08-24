@@ -30,13 +30,13 @@ class Manager {
     /**
      * Attach a new shard of the specified type to the specified route.
      *
-     * @param \Maleficarum\Storage\Shard\Shard $shard
+     * @param \Maleficarum\Storage\Shard\ShardInterface $shard
      * @param string $type
      * @param string $route
      *
      * @return \Maleficarum\Storage\Manager
      */
-    public function attachShard(\Maleficarum\Storage\Shard\Shard $shard, string $type, string $route): \Maleficarum\Storage\Manager {
+    public function attachShard(\Maleficarum\Storage\Shard\ShardInterface $shard, string $type, string $route): \Maleficarum\Storage\Manager {
         if (!mb_strlen($type)) {
             throw new \InvalidArgumentException(sprintf('Incorrect shard type - non empty string expected. %s::attachShard()', static::class));
         }
@@ -82,9 +82,9 @@ class Manager {
      * @param string $type
      * @param string $route
      *
-     * @return \Maleficarum\Storage\Shard\Shard
+     * @return \Maleficarum\Storage\Shard\ShardInterface
      */
-    public function fetchShard(string $type, string $route): \Maleficarum\Storage\Shard\Shard {
+    public function fetchShard(string $type, string $route): \Maleficarum\Storage\Shard\ShardInterface {
         if (!mb_strlen($type)) {
             throw new \InvalidArgumentException(sprintf('Incorrect shard type - non empty string expected. %s::fetchShard()', static::class));
         }
