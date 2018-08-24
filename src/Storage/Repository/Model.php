@@ -38,4 +38,21 @@ interface Model {
      * @return \Maleficarum\Storage\Repository\Model
      */
     public function delete(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\Model;
+
+
+    /**
+     * Perform final data transformation before the retrieved data is merged back into the model object.
+     * 
+     * @param array $data
+     * @return array
+     */
+    public function transformForRetrieval(array $data): array;
+    
+    /**
+     * Perform final data transformation before the model data is sent to the persistence layer.
+     * 
+     * @param array $data
+     * @return array
+     */
+    public function transformForPersistence(array $data): array;
 }
