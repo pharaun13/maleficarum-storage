@@ -14,7 +14,7 @@ interface CollectionInterface {
      * @param array $parameters
      * @return \Maleficarum\Storage\Repository\CollectionInterface
      */
-    public function populate(\Maleficarum\Data\Collection\Persistable\AbstractCollection $collection, array $parameters): \Maleficarum\Storage\Repository\CollectionInterface;
+    public function populate(\Maleficarum\Data\Collection\Persistable\AbstractCollection $collection, array $parameters = []): \Maleficarum\Storage\Repository\CollectionInterface;
     
     /**
      * Persist all items in the provided collection by creating new items.
@@ -31,4 +31,20 @@ interface CollectionInterface {
      * @return \Maleficarum\Storage\Repository\CollectionInterface
      */
     public function deleteAll(\Maleficarum\Data\Collection\Persistable\AbstractCollection $collection): \Maleficarum\Storage\Repository\CollectionInterface;
+
+    /**
+     * Perform final data transformation before the retrieved data is merged back into the collection object.
+     *
+     * @param array $data
+     * @return array
+     */
+    public function transformForRetrieval(array $data): array;
+
+    /**
+     * Perform final data transformation before the collection data is sent to the persistence layer.
+     *
+     * @param array $data
+     * @return array
+     */
+    public function transformForPersistence(array $data): array;
 }
