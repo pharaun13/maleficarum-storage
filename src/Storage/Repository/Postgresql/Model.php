@@ -118,8 +118,10 @@ class Model implements \Maleficarum\Storage\Repository\Model {
         
         foreach ($data as $el) $statement->bindValue($el['param'], $el['value']);
         $statement->bindValue(":id", $model->getId());
-        
-        $statement->execute();
+
+        if (!$statement->execute() || $statement->rowCount() !== 1) {
+            throw new \Maleficarum\Storage\Exception\Repository\EntityNotFoundException(get_class($model), (string)$model->getId());
+        }
 
         // refresh current data with data returned from the database
         $result = $this->transformForRetrieval($statement->fetch());
