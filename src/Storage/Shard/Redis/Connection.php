@@ -15,28 +15,35 @@ class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
      *
      * @var \Redis
      */
-    private $connection;
+    private $connection = null;
 
     /**
      * Internal storage for host
      *
      * @var string
      */
-    private $host;
+    private $host = null;
 
     /**
      * Internal storage for port
      *
      * @var string
      */
-    private $port;
+    private $port = null;
 
     /**
      * Internal storage for password
      *
      * @var string
      */
-    private $password;
+    private $password = null;
+
+    /**
+     * Internal storage for database number
+     * 
+     * @var int
+     */
+    private $database = null;
 
     /* ------------------------------------ Class Property END ----------------------------------------- */
 
@@ -48,12 +55,14 @@ class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
      * @param \Redis $connection
      * @param string $host
      * @param int $port
+     * @param int $database
      * @param string $password
      */
-    public function __construct(\Redis $connection, string $host, int $port, string $password = '') {
+    public function __construct(\Redis $connection, string $host, int $port, int $database = 0, string $password = '') {
         $this->connection = $connection;
         $this->host = $host;
         $this->port = $port;
+        $this->database = $database;
         $this->password = $password;
     }
 
@@ -103,11 +112,11 @@ class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
         }
 
         $connection->connect($this->host, $this->port);
-
         if (!empty($this->password)) {
             $connection->auth($this->password);
         }
-
+        $connection->select($this->database);
+        
         return $this;
     }
     
