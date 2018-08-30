@@ -112,7 +112,72 @@ class Initializer {
      */
     static private function registerManagerInitializers(): void {
         \Maleficarum\Ioc\Container::register('Maleficarum\Storage\Manager', function ($dep, $opts) {
-            die('1');
+            $manager = new \Maleficarum\Storage\Manager();
+            
+            if (isset($dep['Maleficarum\Config'])) {
+                $config = $dep['Maleficarum\Config'];
+                
+                // Postgresql shards
+                if (isset($config['storage::postgresql'])) {
+                    // validate shard config definitions
+                    if (
+                        !isset($config['storage']['postgresql_shard']) 
+                        || !is_array($config['storage']['postgresql_shard'])
+                        || !count($config['storage']['postgresql_shard'])
+                        || !isset($config['storage']['postgresql_shard_default'])
+                    ) {
+                        throw new \RuntimeException(sprintf('Postgresql shards defined but routing was not properly defined. %s', static::class));
+                    }
+                    
+                    // create and attach postgresql shards to the storage manager
+                    foreach ($config['storage']['postgresql_shard'] as $route => $shard) {
+                        // sanitize config parameters
+                        $params = $config['storage::postgresql'][$shard];
+                        $params['port'] = (int)$params['port'];
+                        
+                        // get the connection object
+                        $connection = \Maleficarum\Ioc\Container::get('Maleficarum\Storage\Shard\Postgresql\Connection', $params);
+                            
+                        // attach the shard
+                        $manager->attachShard( $connection,'Postgresql', $route);
+                        
+                        // attach default route
+                        if ($shard === $config['storage']['postgresql_shard_default']) $manager->attachShard($connection, 'Postgresql', '__DEFAULT__');
+                    }
+                }
+                
+                // Redis shards
+                if (isset($config['storage::redis'])) {
+                    // validate shard config definitions
+                    if (
+                        !isset($config['storage']['redis_shard'])
+                        || !is_array($config['storage']['redis_shard'])
+                        || !count($config['storage']['redis_shard'])
+                        || !isset($config['storage']['redis_shard_default'])
+                    ) {
+                        throw new \RuntimeException(sprintf('Postgresql shards defined but routing was not properly defined. %s', static::class));
+                    }
+
+                    // create and attach postgresql shards to the storage manager
+                    foreach ($config['storage']['redis_shard'] as $route => $shard) {
+                        // sanitize config parameters
+                        $params = $config['storage::redis'][$shard];
+                        $params['port'] = (int)$params['port'];
+                        $params['database'] = (int)$params['database'];
+
+                        // get the connection object
+                        $connection = \Maleficarum\Ioc\Container::get('Maleficarum\Storage\Shard\Redis\Connection', $params);
+
+                        // attach the shard
+                        $manager->attachShard( $connection,'Redis', $route);
+
+                        // attach default route
+                        if ($shard === $config['storage']['redis_shard_default']) $manager->attachShard($connection, 'Redis', '__DEFAULT__');
+                    }
+                }
+            }
+            
+            return $manager;
         });
     }
 }
