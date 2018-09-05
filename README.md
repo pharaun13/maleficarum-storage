@@ -4,6 +4,10 @@ This component replaces the now obsolete Maleficarum Database compoment (https:/
 
 # Change Log
 
+## [1.0.1] - 2018-09-05
+### Fixed
+- Fixed a bug that resulted in shard statements being shared across shard connections.
+
 ## [1.0.0] - 2018-08-27
 ### Added
 - initial release of the component
