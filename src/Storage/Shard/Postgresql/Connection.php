@@ -56,7 +56,7 @@ class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
      * 
      * @var array 
      */
-    static private $statements = [];
+    private $statements = [];
     
     /* ------------------------------------ Class Property END ----------------------------------------- */
 
@@ -141,13 +141,13 @@ class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
         
         // attempt to retrieve statement from local cache 
         $hash = crc32($statement);
-        if (array_key_exists($hash, self::$statements)) {
-            return self::$statements[$hash];
+        if (array_key_exists($hash, $this->statements)) {
+            return $this->statements[$hash];
         }
         
         // prepare the statement and place it in cache
         $statement = $this->connection->prepare($statement, $driver_options);
-        self::$statements[$hash] = $statement;
+        $this->statements[$hash] = $statement;
         
         return $statement;
     }
