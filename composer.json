@@ -4,7 +4,7 @@
     "license": "proprietary",
     "require": {
         "php": "^7.2",
-        "maleficarum/ioc": "^2.0",
+        "maleficarum/ioc": "^3.0",
         "maleficarum/data": "^3.0"
     },
     "suggest": {

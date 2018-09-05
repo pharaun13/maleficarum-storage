@@ -26,7 +26,7 @@ class Initializer {
         }
         
         $shards = \Maleficarum\Ioc\Container::get('Maleficarum\Storage\Manager');
-        \Maleficarum\Ioc\Container::registerDependency('Maleficarum\Storage', $shards);
+        \Maleficarum\Ioc\Container::registerShare('Maleficarum\Storage', $shards);
 
         return __METHOD__;
     }
@@ -35,7 +35,7 @@ class Initializer {
      * Add Postgresql shard builder definitions to the IoC component.
      */
     static private function registerPostgresqlInitializers(): void {
-        \Maleficarum\Ioc\Container::register('Maleficarum\Storage\Shard\Postgresql\Connection', function ($dep, $opts) {
+        \Maleficarum\Ioc\Container::registerBuilder('Maleficarum\Storage\Shard\Postgresql\Connection', function ($dep, $opts) {
             // validate input params - host
             if (!array_key_exists('host', $opts) || !mb_strlen($opts['host'])) {
                 throw new \InvalidArgumentException(sprintf('Host not specified correctly. %s',static::class));
@@ -78,7 +78,7 @@ class Initializer {
      * Add Redis shard builder definitions to the IoC component.
      */
     static private function registerRedisInitializers(): void {
-        \Maleficarum\Ioc\Container::register('Maleficarum\Storage\Shard\Redis\Connection', function ($dep, $opts) {
+        \Maleficarum\Ioc\Container::registerBuilder('Maleficarum\Storage\Shard\Redis\Connection', function ($dep, $opts) {
             // validate input params - host
             if (!array_key_exists('host', $opts) || !mb_strlen($opts['host'])) {
                 throw new \InvalidArgumentException(sprintf('Host not specified correctly. %s',static::class));
@@ -111,7 +111,7 @@ class Initializer {
      * Add shard manager builder definitions to the IoC component.
      */
     static private function registerManagerInitializers(): void {
-        \Maleficarum\Ioc\Container::register('Maleficarum\Storage\Manager', function ($dep, $opts) {
+        \Maleficarum\Ioc\Container::registerBuilder('Maleficarum\Storage\Manager', function ($dep, $opts) {
             $manager = new \Maleficarum\Storage\Manager();
             
             if (isset($dep['Maleficarum\Config'])) {
