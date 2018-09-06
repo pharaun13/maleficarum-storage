@@ -6,6 +6,8 @@ declare (strict_types=1);
 
 namespace Maleficarum\Storage\Shard\Postgresql\PDO\Statement;
 
+use PDO;
+
 class Generic extends \PDOStatement {
     /* ------------------------------------ Class Property START --------------------------------------- */
 
@@ -32,6 +34,19 @@ class Generic extends \PDOStatement {
     /* ------------------------------------ Magic methods END ------------------------------------------ */
     
     /* ------------------------------------ Class Methods START ---------------------------------------- */
+
+    /**
+     * Bind value to the specified token.
+     *
+     * @param mixed $parameter
+     * @param mixed $value
+     * @param int $data_type
+     *
+     * @return mixed
+     */
+    public function bindValue($parameter, $value, $data_type = PDO::PARAM_STR) {
+        parent::bindValue($parameter, $value, is_bool($value) ? \PDO::PARAM_BOOL : $data_type);
+    }
 
     /**
      * By default fetch assoc.
