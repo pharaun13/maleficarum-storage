@@ -130,13 +130,15 @@ class Initializer {
                     }
                     
                     // create and attach postgresql shards to the storage manager
+                    $connections = [];
                     foreach ($config['storage']['postgresql_shard'] as $route => $shard) {
                         // sanitize config parameters
                         $params = $config['storage::postgresql'][$shard];
                         $params['port'] = (int)$params['port'];
                         
-                        // get the connection object
-                        $connection = \Maleficarum\Ioc\Container::get('Maleficarum\Storage\Shard\Postgresql\Connection', $params);
+                        // get the connection object 
+                        array_key_exists($shard, $connections) or $connections[$shard] = \Maleficarum\Ioc\Container::get('Maleficarum\Storage\Shard\Postgresql\Connection', $params);
+                        $connection = $connections[$shard];
                             
                         // attach the shard
                         $manager->attachShard( $connection,'Postgresql', $route);
@@ -159,6 +161,7 @@ class Initializer {
                     }
 
                     // create and attach postgresql shards to the storage manager
+                    $connections = [];
                     foreach ($config['storage']['redis_shard'] as $route => $shard) {
                         // sanitize config parameters
                         $params = $config['storage::redis'][$shard];
@@ -166,7 +169,8 @@ class Initializer {
                         $params['database'] = (int)$params['database'];
 
                         // get the connection object
-                        $connection = \Maleficarum\Ioc\Container::get('Maleficarum\Storage\Shard\Redis\Connection', $params);
+                        array_key_exists($shard, $connections) or $connections[$shard] = \Maleficarum\Ioc\Container::get('Maleficarum\Storage\Shard\Redis\Connection', $params);
+                        $connection = $connections[$shard];
 
                         // attach the shard
                         $manager->attachShard( $connection,'Redis', $route);

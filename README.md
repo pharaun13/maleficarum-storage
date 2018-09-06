@@ -4,6 +4,10 @@ This component replaces the now obsolete Maleficarum Database compoment (https:/
 
 # Change Log
 
+## [2.0.3] - 2018-09-06
+### Changed
+- Performance optimization: a single shard definition will only result in one shard connection, regardless of how many non-default routes point to that shard definition.
+
 ## [2.0.2] - 2018-09-05
 ### Added
 - Automatic parameter type detection when binding boolean parameters in Postgresql shards.
