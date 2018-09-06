@@ -4,6 +4,10 @@ This component replaces the now obsolete Maleficarum Database compoment (https:/
 
 # Change Log
 
+## [2.0.2] - 2018-09-05
+### Added
+- Automatic parameter type detection when binding boolean parameters in Postgresql shards.
+
 ## [2.0.1] - 2018-09-05
 ### Fixed
 - Fixed a bug that resulted in shard statements being shared across shard connections. 
@@ -11,6 +15,10 @@ This component replaces the now obsolete Maleficarum Database compoment (https:/
 ## [2.0.0] - 2018-09-05
 ### Changed
 - Component updated to work with Maleficarum\Ioc 3.X
+
+## [1.0.2] - 2018-09-05
+### Added
+- Automatic parameter type detection when binding boolean parameters in Postgresql shards.
 
 ## [1.0.1] - 2018-09-05
 ### Fixed
