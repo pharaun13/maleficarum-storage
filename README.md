@@ -7,7 +7,7 @@ This component replaces the now obsolete Maleficarum Database compoment (https:/
 ## [2.1.0] - 2018-09-10
 ### Added
 - Added a way to inject custom shard selectors to data repositories. Shard selection will no longer lie within the interests of data models.
-- Bumped Maleficarum\Data dependsncy to 4.X+
+- Bumped Maleficarum\Data dependency to 4.X+
 
 ## [2.0.3] - 2018-09-06
 ### Changed
@@ -24,6 +24,11 @@ This component replaces the now obsolete Maleficarum Database compoment (https:/
 ## [2.0.0] - 2018-09-05
 ### Changed
 - Component updated to work with Maleficarum\Ioc 3.X
+
+## [1.1.0] - 2018-09-10
+### Added
+- Added a way to inject custom shard selectors to data repositories. Shard selection will no longer lie within the interests of data models.
+- Bumped Maleficarum\Data dependency to 4.X+
 
 ## [1.0.2] - 2018-09-05
 ### Added
