@@ -4,6 +4,11 @@ This component replaces the now obsolete Maleficarum Database compoment (https:/
 
 # Change Log
 
+## [2.1.0] - 2018-09-10
+### Added
+- Added a way to inject custom shard selectors to data repositories. Shard selection will no longer lie within the interests of data models.
+- Bumped Maleficarum\Data dependsncy to 4.X+
+
 ## [2.0.3] - 2018-09-06
 ### Changed
 - Performance optimization: a single shard definition will only result in one shard connection, regardless of how many non-default routes point to that shard definition.
