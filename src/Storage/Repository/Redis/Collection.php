@@ -12,6 +12,32 @@ class Collection implements \Maleficarum\Storage\Repository\CollectionInterface 
     use \Maleficarum\Storage\DependantTrait;
     
     /* ------------------------------------ Class Traits END ------------------------------------------- */
+
+    /* ------------------------------------ Class Property START --------------------------------------- */
+
+    /**
+     * This is the definition of the shard selector function used by this repository. If set it will be
+     * called to determine the shard route used for the data currently stored in the model object specified
+     * for CRUD operations.
+     *
+     * @var \Callable
+     */
+    protected $shardSelector = null;
+    
+    /* ------------------------------------ Class Property END ----------------------------------------- */
+
+    /* ------------------------------------ Magic methods START ---------------------------------------- */
+
+    /**
+     * Set the default shard selector implementation.
+     */
+    public function __construct() {
+        $this->setShardSelector(function(\Maleficarum\Data\Collection\Persistable\AbstractCollection $model) {
+            return $model->getDomainGroup();
+        });
+    }
+    
+    /* ------------------------------------ Magic methods END ------------------------------------------ */
     
     /* ------------------------------------ Class Methods START ---------------------------------------- */
 
@@ -20,7 +46,7 @@ class Collection implements \Maleficarum\Storage\Repository\CollectionInterface 
      */
     public function populate(\Maleficarum\Data\Collection\Persistable\AbstractCollection $collection, array $parameters = []): \Maleficarum\Storage\Repository\CollectionInterface {
         // connect to shard if necessary
-        $shard = $this->getStorage()->fetchShard('Redis', $collection->getShardRoute());
+        $shard = $this->getStorage()->fetchShard('Redis', ($this->shardSelector)($collection));
         $shard->isConnected() or $shard->connect();
         
         // recover item ids - redis repositories only allow for searching based on key names
@@ -59,7 +85,7 @@ class Collection implements \Maleficarum\Storage\Repository\CollectionInterface 
      */
     public function createAll(\Maleficarum\Data\Collection\Persistable\AbstractCollection $collection): \Maleficarum\Storage\Repository\CollectionInterface {
         // connect to shard if necessary
-        $shard = $this->getStorage()->fetchShard('Redis', $collection->getShardRoute());
+        $shard = $this->getStorage()->fetchShard('Redis', ($this->shardSelector)($collection));
         $shard->isConnected() or $shard->connect();
 
         // transform data for persistence
@@ -91,7 +117,7 @@ class Collection implements \Maleficarum\Storage\Repository\CollectionInterface 
      */
     public function deleteAll(\Maleficarum\Data\Collection\Persistable\AbstractCollection $collection): \Maleficarum\Storage\Repository\CollectionInterface {
         // connect to shard if necessary
-        $shard = $this->getStorage()->fetchShard('Redis', $collection->getShardRoute());
+        $shard = $this->getStorage()->fetchShard('Redis', ($this->shardSelector)($collection));
         $shard->isConnected() or $shard->connect();
 
         // transform data for persistence
@@ -146,4 +172,16 @@ class Collection implements \Maleficarum\Storage\Repository\CollectionInterface 
     }
 
     /* ------------------------------------ Helper methods END ----------------------------------------- */
+
+    /* ------------------------------------ Setters & Getters START ------------------------------------ */
+
+    /**
+     * @see \Maleficarum\Storage\Repository\CollectionInterface.setShardSelector()
+     */
+    public function setShardSelector(Callable $shardSelector): \Maleficarum\Storage\Repository\CollectionInterface {
+        $this->shardSelector = $shardSelector;
+        return $this;
+    }
+    
+    /* ------------------------------------ Setters & Getters END -------------------------------------- */
 };

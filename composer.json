@@ -5,7 +5,7 @@
     "require": {
         "php": "^7.2",
         "maleficarum/ioc": "^2.0",
-        "maleficarum/data": "^3.0"
+        "maleficarum/data": "^4.0"
     },
     "suggest": {
         "ext-pgsql": "In order to use PostgreSQL as a data storage.",

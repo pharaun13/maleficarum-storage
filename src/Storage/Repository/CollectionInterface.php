@@ -47,4 +47,12 @@ interface CollectionInterface {
      * @return array
      */
     public function transformForPersistence(array $data): array;
+
+    /**
+     * Get the current shard selector that will be used when calling CRUD operations on entity data set.
+     *
+     * @param Callable $shardSelector
+     * @return \Maleficarum\Storage\Repository\CollectionInterface;
+     */
+    public function setShardSelector(Callable $shardSelector): \Maleficarum\Storage\Repository\CollectionInterface;
 }

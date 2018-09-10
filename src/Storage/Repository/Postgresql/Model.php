@@ -12,6 +12,32 @@ class Model implements \Maleficarum\Storage\Repository\ModelInterface {
     use \Maleficarum\Storage\DependantTrait;
     
     /* ------------------------------------ Class Traits END ------------------------------------------- */
+
+    /* ------------------------------------ Class Property START --------------------------------------- */
+
+    /**
+     * This is the definition of the shard selector function used by this repository. If set it will be
+     * called to determine the shard route used for the data currently stored in the model object specified
+     * for CRUD operations.
+     * 
+     * @var \Callable 
+     */
+    protected $shardSelector = null;
+    
+    /* ------------------------------------ Class Property END ----------------------------------------- */
+
+    /* ------------------------------------ Magic methods START ---------------------------------------- */
+
+    /**
+     * Set the default shard selector implementation. 
+     */
+    public function __construct() {
+        $this->setShardSelector(function(\Maleficarum\Data\Model\Persistable\AbstractModel $model) {
+            return $model->getDomainGroup();
+        });
+    }
+
+    /* ------------------------------------ Magic methods END ------------------------------------------ */
     
     /* ------------------------------------ Class Methods START ---------------------------------------- */
     
@@ -20,7 +46,7 @@ class Model implements \Maleficarum\Storage\Repository\ModelInterface {
      */
     public function create(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\ModelInterface {
         // connect to shard if necessary
-        $shard = $this->getStorage()->fetchShard('Postgresql', $model->getShardRoute());
+        $shard = $this->getStorage()->fetchShard('Postgresql', ($this->shardSelector)($model));
         $shard->isConnected() or $shard->connect();
 
         // fetch DB DTO object
@@ -68,7 +94,7 @@ class Model implements \Maleficarum\Storage\Repository\ModelInterface {
      */
     public function read(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\ModelInterface {
         // connect to shard if necessary
-        $shard = $this->getStorage()->fetchShard('Postgresql', $model->getShardRoute());
+        $shard = $this->getStorage()->fetchShard('Postgresql', ($this->shardSelector)($model));
         $shard->isConnected() or $shard->connect();
 
         // build the query
@@ -93,7 +119,7 @@ class Model implements \Maleficarum\Storage\Repository\ModelInterface {
      */
     public function update(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\ModelInterface {
         // connect to shard if necessary
-        $shard = $this->getStorage()->fetchShard('Postgresql', $model->getShardRoute());
+        $shard = $this->getStorage()->fetchShard('Postgresql', ($this->shardSelector)($model));
         $shard->isConnected() or $shard->connect();
 
         // fetch DB DTO object
@@ -135,7 +161,7 @@ class Model implements \Maleficarum\Storage\Repository\ModelInterface {
      */
     public function delete(\Maleficarum\Data\Model\Persistable\AbstractModel $model): \Maleficarum\Storage\Repository\ModelInterface {
         // connect to shard if necessary
-        $shard = $this->getStorage()->fetchShard('Postgresql', $model->getShardRoute());
+        $shard = $this->getStorage()->fetchShard('Postgresql', ($this->shardSelector)($model));
         $shard->isConnected() or $shard->connect();
 
         // build the query
@@ -197,7 +223,18 @@ class Model implements \Maleficarum\Storage\Repository\ModelInterface {
         
         return $result;
     }
-
     
     /* ------------------------------------ Class Methods END ------------------------------------------ */
+
+    /* ------------------------------------ Setters & Getters START ------------------------------------ */
+    
+    /**
+     * @see \Maleficarum\Storage\Repository\ModelInterface.setShardSelector()
+     */
+    public function setShardSelector(Callable $shardSelector): \Maleficarum\Storage\Repository\ModelInterface {
+        $this->shardSelector = $shardSelector;
+        return $this;
+    }
+    
+    /* ------------------------------------ Setters & Getters END -------------------------------------- */
 }

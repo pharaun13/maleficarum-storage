@@ -54,4 +54,12 @@ interface ModelInterface {
      * @return array
      */
     public function transformForPersistence(array $data): array;
+    
+    /**
+     * Get the current shard selector that will be used when calling CRUD operations on a model.
+     * 
+     * @param Callable $shardSelector
+     * @return \Maleficarum\Storage\Repository\ModelInterface;
+     */
+    public function setShardSelector(Callable $shardSelector): \Maleficarum\Storage\Repository\ModelInterface;
 }

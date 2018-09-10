@@ -4,6 +4,11 @@ This component replaces the now obsolete Maleficarum Database compoment (https:/
 
 # Change Log
 
+## [1.1.0] - 2018-09-05
+### Added
+- Added a way to inject custom shard selectors to data repositories. Shard selection will no longer lie within the interests of data models.
+- Bumped Maleficarum\Data dependency to 4.X+
+
 ## [1.0.2] - 2018-09-05
 ### Added
 - Automatic parameter type detection when binding boolean parameters in Postgresql shards.
