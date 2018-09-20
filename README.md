@@ -4,6 +4,13 @@ This component replaces the now obsolete Maleficarum Database compoment (https:/
 
 # Change Log
 
+## [1.2.0] - 2018-09-20
+### Added
+- Added a way to retrieve the list of all shards of a specified type from the shard manager.
+- Added an implementation of the scan method to the Redis connection object (it needs a reference call so the magic implementation was insufficient)
+### Fixed
+- Incorrect exception message when attempting to execute logic methods on disconnected redis connection objects.
+
 ## [1.1.0] - 2018-09-10
 ### Added
 - Added a way to inject custom shard selectors to data repositories. Shard selection will no longer lie within the interests of data models.
