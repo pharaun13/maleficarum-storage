@@ -106,5 +106,30 @@ class Manager {
         throw new \InvalidArgumentException(sprintf('Impossible to fetch the specified route of the specified type. %s::fetchShard()', static::class));
     }
 
+    /**
+     * Fetch an array of all shards of the specified type. (shards will be indexed by route and the default route will not be returned unless it's the only one)
+     *
+     * @param string $type
+     *
+     * @return array
+     */
+    public function fetchShards(string $type) {
+        if (!mb_strlen($type)) {
+            throw new \InvalidArgumentException(sprintf('Incorrect shard type - non empty string expected. %s::fetchShards()', static::class));
+        }
+
+        if (array_key_exists($type, $this->routes) && count($this->routes[$type])) {
+            if (count($this->routes[$type]) === 1) {
+                return $this->routes[$type];
+            } else {
+                $ret_val = $this->routes[$type];
+                unset($ret_val[self::DEFAULT_ROUTE]);
+                return $ret_val;
+            }
+        }
+
+        throw new \InvalidArgumentException(sprintf('Unknown type specified. %s::fetchShard()', static::class));
+    }
+    
     /* ------------------------------------ Class Methods END ------------------------------------------ */
 }
