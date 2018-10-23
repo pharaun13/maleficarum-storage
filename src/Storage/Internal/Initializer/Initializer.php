@@ -69,6 +69,12 @@ class Initializer {
                 $opts['username'],
                 $opts['password']
             );
+
+            // set connection timeout if defined
+            array_key_exists('connection_timeout', $opts) and $connection->setConnectionTimeout($opts['connection_timeout']);
+
+            // set connection attempt count if defined
+            array_key_exists('connection_attempts', $opts) and $connection->setConnectionAttempts($opts['connection_attempts']);
             
             return $connection;
         });
@@ -103,6 +109,12 @@ class Initializer {
                 array_key_exists('auth', $opts) ? $opts['auth'] : ''
             );
             
+            // set connection timeout if defined
+            array_key_exists('connection_timeout', $opts) and $connection->setConnectionTimeout($opts['connection_timeout']);
+            
+            // set connection attempt count if defined
+            array_key_exists('connection_attempts', $opts) and $connection->setConnectionAttempts($opts['connection_attempts']); 
+            
             return $connection;
         });
     }
@@ -135,6 +147,8 @@ class Initializer {
                         // sanitize config parameters
                         $params = $config['storage::postgresql'][$shard];
                         $params['port'] = (int)$params['port'];
+                        isset($params['connection_timeout']) and $params['connection_timeout'] = (int)$params['connection_timeout'];
+                        isset($params['connection_attempts']) and $params['connection_attempts'] = (int)$params['connection_attempts'];
                         
                         // get the connection object 
                         array_key_exists($shard, $connections) or $connections[$shard] = \Maleficarum\Ioc\Container::get('Maleficarum\Storage\Shard\Postgresql\Connection', $params);
@@ -167,7 +181,9 @@ class Initializer {
                         $params = $config['storage::redis'][$shard];
                         $params['port'] = (int)$params['port'];
                         $params['database'] = (int)$params['database'];
-
+                        isset($params['connection_timeout']) and $params['connection_timeout'] = (int)$params['connection_timeout'];
+                        isset($params['connection_attempts']) and $params['connection_attempts'] = (int)$params['connection_attempts'];
+                            
                         // get the connection object
                         array_key_exists($shard, $connections) or $connections[$shard] = \Maleficarum\Ioc\Container::get('Maleficarum\Storage\Shard\Redis\Connection', $params);
                         $connection = $connections[$shard];

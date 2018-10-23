@@ -20,4 +20,25 @@ interface ShardInterface {
      * @return bool
      */
     public function isConnected(): bool;
+    
+    /**
+     * Set the connection timeout value (in seconds) - this how long the shard object will wait when attempting
+     * to connect to the storage engine.
+     * DEFAULT: engine based
+     * 
+     * @param int $timeout
+     *
+     * @return ShardInterface
+     */
+    public function setConnectionTimeout(int $timeout): \Maleficarum\Storage\Shard\ShardInterface;
+
+    /**
+     * Set the number of time the shard object will attempt to connect to the shard engine.
+     * DEFAULT: 1
+     * 
+     * @param int $attempts
+     *
+     * @return ShardInterface
+     */
+    public function setConnectionAttempts(int $attempts): \Maleficarum\Storage\Shard\ShardInterface;
 }

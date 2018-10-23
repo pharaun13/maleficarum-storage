@@ -52,6 +52,22 @@ class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
     private $password = null;
 
     /**
+     * Internal storage for the connection timeout value (in seconds).
+     * DEFAULT: 20 [seconds]
+     * 
+     * @var int 
+     */
+    private $timeout = 20;
+
+    /**
+     * This value defines how many connection attemps will be executed when attempting to connect before giving up.
+     * DEFAULT: 1
+     * 
+     * @var int 
+     */
+    private $attempts = 1;
+    
+    /**
      * Internal storage for prepare statements so that we don't have to prepare them again.
      * 
      * @var array 
@@ -103,7 +119,7 @@ class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
     /* ------------------------------------ Class Methods START ---------------------------------------- */
 
     /**
-     * @see \Maleficarum\Storage\Shard\ShardInterface.connect()
+     * @see \Maleficarum\Storage\Shard\ShardInterface::connect()
      */
     public function connect(): \Maleficarum\Storage\Shard\ShardInterface {
         if ($this->connection instanceof \PDO) {
@@ -113,17 +129,32 @@ class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
         $connection = [
             'pgsql:host='.$this->host.';port='.$this->port.';dbname='.$this->dbname,
             $this->username,
-            $this->password
+            $this->password,
+            [
+                \PDO::ATTR_TIMEOUT => $this->timeout,
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+            ]
         ];
-        $this->connection = \Maleficarum\Ioc\Container::get('PDO', $connection);
-        $this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        $this->connection->setAttribute(\PDO::ATTR_STATEMENT_CLASS, ['Maleficarum\Storage\Shard\Postgresql\PDO\Statement\Generic', [$this->connection]]);
+        
+        $connection_attempt_counter = 0;
+        while (is_null($this->connection) && $connection_attempt_counter < $this->attempts) {
+            $connection_attempt_counter++;
+            
+            try {
+                $this->connection = \Maleficarum\Ioc\Container::get('PDO', $connection);
+                $this->connection->setAttribute(\PDO::ATTR_STATEMENT_CLASS, ['Maleficarum\Storage\Shard\Postgresql\PDO\Statement\Generic', [$this->connection]]);
+            } catch (\PDOException $e) {
+                if ($connection_attempt_counter >= $this->attempts) {
+                    throw $e;
+                }
+            }
+        }
         
         return $this;
     }
     
     /**
-     * @see \Maleficarum\Storage\Shard\ShardInterface.isConnected()
+     * @see \Maleficarum\Storage\Shard\ShardInterface::isConnected()
      */
     public function isConnected(): bool {
         return !is_null($this->connection);
@@ -174,4 +205,32 @@ class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
     }
     
     /* ------------------------------------ Class Methods END ------------------------------------------ */
+
+    /* ------------------------------------ Setters & Getters START ------------------------------------ */
+
+    /**
+     * @see \Maleficarum\Storage\Shard\ShardInterface::setConnectionTimeout()
+     */
+    public function setConnectionTimeout(int $timeout): \Maleficarum\Storage\Shard\ShardInterface {
+        if ($timeout < 1) {
+            throw new \InvalidArgumentException(sprintf('Timeout value must be greater than 0. \%s::setConnectionTimeout()',static::class));
+        }
+        
+        $this->timeout = $timeout;
+        return $this;
+    }
+
+    /**
+     * @see \Maleficarum\Storage\Shard\ShardInterface::setAttempts()
+     */
+    public function setConnectionAttempts(int $attempts): \Maleficarum\Storage\Shard\ShardInterface {
+        if ($attempts < 1) {
+            throw new \InvalidArgumentException(sprintf('Attempt count must be greater than 0. \%s::setAttempts()',static::class));
+        }
+        
+        $this->attempts = $attempts;
+        return $this;
+    }
+    
+    /* ------------------------------------ Setters & Getters END -------------------------------------- */
 }

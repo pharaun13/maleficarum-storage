@@ -45,6 +45,22 @@ class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
      */
     private $database = null;
 
+    /**
+     * Internal storage for the connection timeout value (in seconds).
+     * DEFAULT: 0 [unlimited]
+     *
+     * @var int
+     */
+    private $timeout = 0;
+
+    /**
+     * This value defines how many connection attemps will be executed when attempting to connect before giving up.
+     * DEFAULT: 1
+     *
+     * @var int
+     */
+    private $attempts = 1;
+
     /* ------------------------------------ Class Property END ----------------------------------------- */
 
     /* ------------------------------------ Magic methods START ---------------------------------------- */
@@ -111,7 +127,19 @@ class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
             return $this;
         }
 
-        $connection->connect($this->host, $this->port);
+        $connection_attempt_counter = 0;
+        while (!$connection->isConnected() && $connection_attempt_counter < $this->attempts) {
+            $connection_attempt_counter++;
+            
+            try {
+                $connection->connect($this->host, $this->port, $this->timeout);
+            } catch (\RedisException $e) {
+                if ($connection_attempt_counter >= $this->attempts) {
+                    throw $e;
+                }
+            }
+        }
+        
         if (!empty($this->password)) {
             $connection->auth($this->password);
         }
@@ -139,4 +167,32 @@ class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
     }
     
     /* ------------------------------------ Connection methods END ------------------------------------- */
+
+    /* ------------------------------------ Setters & Getters START ------------------------------------ */
+
+    /**
+     * @see \Maleficarum\Storage\Shard\ShardInterface::setConnectionTimeout()
+     */
+    public function setConnectionTimeout(int $timeout): \Maleficarum\Storage\Shard\ShardInterface {
+        if ($timeout < 1) {
+            throw new \InvalidArgumentException(sprintf('Timeout value must be greater than 0. \%s::setConnectionTimeout()',static::class));
+        }
+
+        $this->timeout = $timeout;
+        return $this;
+    }
+
+    /**
+     * @see \Maleficarum\Storage\Shard\ShardInterface::setAttempts()
+     */
+    public function setConnectionAttempts(int $attempts): \Maleficarum\Storage\Shard\ShardInterface {
+        if ($attempts < 1) {
+            throw new \InvalidArgumentException(sprintf('Attempt count must be greater than 0. \%s::setAttempts()',static::class));
+        }
+
+        $this->attempts = $attempts;
+        return $this;
+    }
+
+    /* ------------------------------------ Setters & Getters END -------------------------------------- */
 }

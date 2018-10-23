@@ -4,6 +4,13 @@ This component replaces the now obsolete Maleficarum Database compoment (https:/
 
 # Change Log
 
+## [3.0.0] - 2018-10-23
+## Added
+- Added connection retry logic when connecting to postgresql shards. (number of retries can be set via the constructor and/or initializer)
+- Added connection retry login when connecting to redis shards. (number of retries can be set via the constructor and/or initializer)
+- Added an option to specify connection timeout for postgresql connections.
+- Added an option to specify connection timeout for redis connections.
+
 ## [2.2.0] - 2018-09-20
 ### Added
 - Added a way to retrieve the list of all shards of a specified type from the shard manager.
