@@ -151,14 +151,47 @@ class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
     /**
      * @see https://github.com/phpredis/phpredis#scan
      */
-    public function scan(&$cursor) {
+    public function scan(&$cursor, $pattern = null, $count = 0) {
         if (!$this->connection->isConnected()) {
             throw new \LogicException(sprintf('Cannot call method before connection initialization. \%s::scan()',static::class));
         }
 
-        return $this->connection->scan($cursor);
+        return $this->connection->scan($cursor, $pattern, $count);
     }
-    
+
+    /**
+     * @see https://github.com/phpredis/phpredis#hScan
+     */
+    public function hScan(string $key, &$cursor, $pattern = '', $count = 0) {
+        if (!$this->connection->isConnected()) {
+            throw new \LogicException(sprintf('Cannot call method before connection initialization. \%s::hScan()',static::class));
+        }
+
+        return $this->connection->hScan($key, $cursor, $pattern, $count);
+    }
+
+    /**
+     * @see https://github.com/phpredis/phpredis#zScan
+     */
+    public function zScan(string $key, &$cursor, $pattern = '', $count = 0) {
+        if (!$this->connection->isConnected()) {
+            throw new \LogicException(sprintf('Cannot call method before connection initialization. \%s::zScan()',static::class));
+        }
+
+        return $this->connection->zScan($key, $cursor, $pattern, $count);
+    }
+
+    /**
+     * @see https://github.com/phpredis/phpredis#sScan
+     */
+    public function sScan(string $key, &$cursor, $pattern = '', $count = 0) {
+        if (!$this->connection->isConnected()) {
+            throw new \LogicException(sprintf('Cannot call method before connection initialization. \%s::sScan()',static::class));
+        }
+
+        return $this->connection->sScan($key, $cursor, $pattern, $count);
+    }
+
     /**
      * @see \Maleficarum\Storage\Shard\ShardInterface.isConnected()
      */
