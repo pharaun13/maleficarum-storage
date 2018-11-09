@@ -151,7 +151,7 @@ class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
     /**
      * @see https://github.com/phpredis/phpredis#scan
      */
-    public function scan(&$cursor, $pattern = null, $count = 0) {
+    public function scan(&$cursor, $pattern = '', $count = 0) {
         if (!$this->connection->isConnected()) {
             throw new \LogicException(sprintf('Cannot call method before connection initialization. \%s::scan()',static::class));
         }
