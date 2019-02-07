@@ -132,4 +132,85 @@ class Manager {
     }
     
     /* ------------------------------------ Class Methods END ------------------------------------------ */
+
+    /* ------------------------------------ Transactions START ----------------------------------------- */
+
+    /**
+     * Begin transaction
+     *
+     * @return Manager
+     */
+    public function beginTransaction(): \Maleficarum\Storage\Manager {
+        $shards = $this->fetchShards('Postgresql');
+        if (\count($shards) === 0) {
+            \LogicException('No Postgresql shards were defined');
+        }
+
+        foreach($shards as $shard) {
+            $shard->isConnected() or $shard->connect();
+            $shard->inTransaction() or $shard->beginTransaction();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Commit transaction
+     *
+     * @return Manager
+     */
+    public function commit(): \Maleficarum\Storage\Manager {
+        $shards = $this->fetchShards('Postgresql');
+        if (\count($shards) === 0) {
+            \LogicException('No Postgresql shards were defined');
+        }
+
+        foreach($shards as $shard) {
+            $shard->isConnected() or $shard->connect();
+            $shard->inTransaction() and $shard->commit();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Rollback transaction
+     *
+     * @return Manager
+     */
+    public function rollback(): \Maleficarum\Storage\Manager {
+        $shards = $this->fetchShards('Postgresql');
+        if (\count($shards) === 0) {
+            \LogicException('No Postgresql shards were defined');
+        }
+
+        foreach($shards as $shard){
+            $shard->isConnected() or $shard->connect();
+            $shard->inTransaction() and $shard->rollBack();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Check if any of shards is in transaction
+     *
+     * @return bool
+     */
+    public function isInTransaction(): bool {
+        $shards = $this->fetchShards('Postgresql');
+        if (\count($shards) === 0) {
+            \LogicException('No Postgresql shards were defined');
+        }
+
+        foreach($shards as $shard) {
+            $shard->isConnected() or $shard->connect();
+            if ($shard->inTransaction() === true)
+                return true;
+        }
+
+        return false;
+    }
+
+    /* ------------------------------------ Transactions END ------------------------------------------- */
 }
