@@ -3,6 +3,10 @@
 This component replaces the now obsolete Maleficarum Database compoment (https://github.com/pharaun13/maleficarum-database). All MSSQL code was removed and persistence layers were decoupled from actual model objects. Additionally generic Redis model/collection repository was implemented and provided as basis for project specific implementations.
 
 # Change Log
+## [3.2.0] - 2018-11-08
+## Added
+- Added transaction support for Postgresql shards
+
 ## [3.1.0] - 2018-11-08
 ## Added
 - Added hScan, zScan, sScan methods for redis connection
