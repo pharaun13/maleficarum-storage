@@ -148,9 +148,7 @@ class Manager {
 
         foreach($shards as $shard) {
             $shard->isConnected() or $shard->connect();
-            if (!$shard->inTransaction()) {
-                $shard->beginTransaction();
-            }
+            $shard->inTransaction() or $shard->beginTransaction();
         }
 
         return $this;
@@ -169,9 +167,7 @@ class Manager {
 
         foreach($shards as $shard) {
             $shard->isConnected() or $shard->connect();
-            if ($shard->inTransaction()) {
-                $shard->commit();
-            }
+            $shard->inTransaction() and $shard->commit();
         }
 
         return $this;
