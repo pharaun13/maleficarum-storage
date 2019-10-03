@@ -196,10 +196,19 @@ class Collection implements \Maleficarum\Storage\Repository\CollectionInterface
 
     /**
      * Fetch a list of columns that can be used for collection sorting. Empty array means that no sorting is available for this collection.
-     * 
+     *
      * @return array
      */
     protected function getSortColumns(): array {
+        return [];
+    }
+
+    /**
+     * Fetch a list of columns that can be used in select. Empty array means that no sorting is available for this collection.
+     *
+     * @return array
+     */
+    protected function getSelectableColumns(): array {
         return [];
     }
     
@@ -252,6 +261,12 @@ class Collection implements \Maleficarum\Storage\Repository\CollectionInterface
         
         // SUM 
         if (array_key_exists('__sum', $data)) is_array($data['__sum']) && count($data['__sum']) or $this->respondToInvalidArgument('Incorrect __sum data. \%s::populate()');
+
+        // COLUMNS
+        if (array_key_exists('__columns', $data)) {
+            is_array($data['__columns']) && count($data['__columns']) or $this->respondToInvalidArgument('Incorrect __columns data. \%s::populate()');
+            count(array_diff($data['__columns'], $this->getSelectableColumns())) === 0 or $this->respondToInvalidArgument('Unsupported columns provided. \%s::populate()');
+        }
         
         return $this;
     }
@@ -301,6 +316,8 @@ class Collection implements \Maleficarum\Storage\Repository\CollectionInterface
         } elseif (array_key_exists('__sum', $dto->data)) {
             $query .= 'SUM("' . array_shift($dto->data['__sum']) . '") AS "__sum" ';
             count($dto->data['__sum']) and $query .= ', "' . implode('", "', $dto->data['__sum']) . '" ';
+        } elseif (array_key_exists('__columns', $dto->data)) {
+             $query .= ' "' . implode('", "', $dto->data['__columns']) . '" ';
         } else {
             $query .= '* ';
         }
