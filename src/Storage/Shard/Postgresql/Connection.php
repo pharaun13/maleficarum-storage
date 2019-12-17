@@ -163,11 +163,16 @@ class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
     /**
      * @param string $statement
      * @param array  $driver_options
+     * @param bool $useCache
      * @return \PDOStatement
      */
-    public function prepare(string $statement, array $driver_options = []): \PDOStatement {
+    public function prepare(string $statement, array $driver_options = [], bool $useCache = true): \PDOStatement {
         if (is_null($this->connection)) {
             throw new \RuntimeException(sprintf('Cannot execute DB methods prior to establishing a connection. \%s::__call()', static::class));
+        }
+
+        if (!$useCache){
+            return $this->connection->prepare($statement, $driver_options);
         }
         
         // attempt to retrieve statement from local cache 
