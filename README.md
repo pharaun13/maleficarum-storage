@@ -7,7 +7,6 @@ This component replaces the now obsolete Maleficarum Database compoment (https:/
 ## Added
 - Flag to avoid PDO statements local caching
 
-
 ## [3.1.0] - 2018-11-08
 ## Added
 - Added hScan, zScan, sScan methods for redis connection
