@@ -3,6 +3,11 @@
 This component replaces the now obsolete Maleficarum Database compoment (https://github.com/pharaun13/maleficarum-database). All MSSQL code was removed and persistence layers were decoupled from actual model objects. Additionally generic Redis model/collection repository was implemented and provided as basis for project specific implementations.
 
 # Change Log
+## [3.3.0] - 2020-04-20
+## Added
+- useCache flag on Postgres Collection and Model constructors to control PDO caching mechanism in underneath populate function
+
+# Change Log
 ## [3.2.0] - 2020-01-02
 ## Added
 - Flag to avoid PDO statements local caching
