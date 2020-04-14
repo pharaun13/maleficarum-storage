@@ -179,7 +179,7 @@ class Model implements \Maleficarum\Storage\Repository\ModelInterface {
         $query = 'DELETE FROM "' . $model->getStorageGroup() . '" WHERE "' . $model->getModelPrefix() . 'Id" = :id';
         
         // set up and execute the PDO statement
-        $statement = $shard->prepare($query, $this->useCache);
+        $statement = $shard->prepare($query, [], $this->useCache);
 
         $statement->bindValue(":id", $model->getId());
 
