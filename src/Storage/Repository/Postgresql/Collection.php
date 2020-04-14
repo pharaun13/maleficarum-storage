@@ -24,6 +24,13 @@ class Collection implements \Maleficarum\Storage\Repository\CollectionInterface
      * @var \Callable
      */
     protected $shardSelector = null;
+
+    /**
+     * Controls the usage of in-memory PDO statements caching
+     *
+     * @var bool
+     */
+    protected $useCache;
     
     /* ------------------------------------ Class Property END ----------------------------------------- */
 
@@ -31,11 +38,15 @@ class Collection implements \Maleficarum\Storage\Repository\CollectionInterface
 
     /**
      * Set the default shard selector implementation.
+     *
+     * @param bool $useCache
      */
-    public function __construct() {
+    public function __construct(bool $useCache = true) {
         $this->setShardSelector(function(\Maleficarum\Data\Collection\Persistable\AbstractCollection $model) {
             return $model->getDomainGroup();
         });
+
+        $this->useCache = $useCache;
     }
     
     /* ------------------------------------ Magic methods END ------------------------------------------ */
@@ -83,7 +94,7 @@ class Collection implements \Maleficarum\Storage\Repository\CollectionInterface
         $shard->isConnected() or $shard->connect();
         
         // fetch data from the persistence layer
-        $statement = $shard->prepare($query);
+        $statement = $shard->prepare($query, [], $this->useCache);
         foreach ($dto->params as $param => $value) $statement->bindValue($param, $value);
         $statement->execute();
         
@@ -138,7 +149,7 @@ class Collection implements \Maleficarum\Storage\Repository\CollectionInterface
         $shard->isConnected() or $shard->connect();
         
         // send data to the persistence layer
-        $statement = $shard->prepare($sql);
+        $statement = $shard->prepare($sql, [], $this->useCache);
         foreach ($params as $k => $v) $statement->bindValue($k, $v);
         $statement->execute();
         
@@ -173,7 +184,7 @@ class Collection implements \Maleficarum\Storage\Repository\CollectionInterface
         $sql .= implode(', ', $temp).')';
         
         // remove data from the persistence layer
-        $statement = $shard->prepare($sql);
+        $statement = $shard->prepare($sql, [], $this->useCache);
         foreach ($ids as $k => $v) $statement->bindValue($k, $v);
         $statement->execute();
         
