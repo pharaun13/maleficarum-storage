@@ -23,18 +23,29 @@ class Model implements \Maleficarum\Storage\Repository\ModelInterface {
      * @var \Callable 
      */
     protected $shardSelector = null;
+
+    /**
+     * Controls the usage of in-memory PDO statements caching
+     *
+     * @var bool
+     */
+    protected $useCache;
     
     /* ------------------------------------ Class Property END ----------------------------------------- */
 
     /* ------------------------------------ Magic methods START ---------------------------------------- */
 
     /**
-     * Set the default shard selector implementation. 
+     * Set the default shard selector implementation.
+     *
+     * @param bool $useCache
      */
-    public function __construct() {
+    public function __construct(bool $useCache = true) {
         $this->setShardSelector(function(\Maleficarum\Data\Model\Persistable\AbstractModel $model) {
             return $model->getDomainGroup();
         });
+
+        $this->useCache = $useCache;
     }
 
     /* ------------------------------------ Magic methods END ------------------------------------------ */
@@ -76,7 +87,7 @@ class Model implements \Maleficarum\Storage\Repository\ModelInterface {
         $query .= ' RETURNING *;';
 
         // set up and execute the PDO statement
-        $statement = $shard->prepare($query);
+        $statement = $shard->prepare($query, [], $this->useCache);
 
         foreach ($data as $el) $statement->bindValue($el['param'], $el['value']);
 
@@ -100,7 +111,7 @@ class Model implements \Maleficarum\Storage\Repository\ModelInterface {
         // build the query
         $query = 'SELECT * FROM "' . $model->getStorageGroup() . '" WHERE "' . $model->getModelPrefix() . 'Id" = :id';
         
-        $statement = $shard->prepare($query);
+        $statement = $shard->prepare($query, [], $this->useCache);
         $statement->bindValue(":id", $model->getId());
 
         if (!$statement->execute() || $statement->rowCount() !== 1) {
@@ -140,7 +151,7 @@ class Model implements \Maleficarum\Storage\Repository\ModelInterface {
         $query .= 'WHERE "' . $model->getModelPrefix() . 'Id" = :id RETURNING *';
 
         // set up and execute the PDO statement
-        $statement = $shard->prepare($query);
+        $statement = $shard->prepare($query, [], $this->useCache);
         
         foreach ($data as $el) $statement->bindValue($el['param'], $el['value']);
         $statement->bindValue(":id", $model->getId());
@@ -168,7 +179,7 @@ class Model implements \Maleficarum\Storage\Repository\ModelInterface {
         $query = 'DELETE FROM "' . $model->getStorageGroup() . '" WHERE "' . $model->getModelPrefix() . 'Id" = :id';
         
         // set up and execute the PDO statement
-        $statement = $shard->prepare($query);
+        $statement = $shard->prepare($query, $this->useCache);
 
         $statement->bindValue(":id", $model->getId());
 
