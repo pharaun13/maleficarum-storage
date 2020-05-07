@@ -183,6 +183,9 @@ class Collection implements \Maleficarum\Storage\Repository\CollectionInterface
         foreach ($ids as $key => $val) $temp[] = $key;
         $sql .= implode(', ', $temp).')';
         
+        // establish the connection if necessary
+        $shard->isConnected() or $shard->connect();
+        
         // remove data from the persistence layer
         $statement = $shard->prepare($sql, [], $this->useCache);
         foreach ($ids as $k => $v) $statement->bindValue($k, $v);
