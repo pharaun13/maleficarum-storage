@@ -7,7 +7,43 @@ declare (strict_types=1);
 namespace Maleficarum\Storage\Shard\Redis;
 
 class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
-    
+
+    /* ------------------------------------ Class Constants START -------------------------------------- */
+
+    const DEPRECATED_ALIASES_MAP = [
+        'delete' => 'del',
+        'evaluate' => 'eval',
+        'evaluateSha' => 'evalSha',
+        'getKeys' => 'keys',
+        'getMultiple' => 'mGet',
+        'lGet' => 'lIndex',
+        'lGetRange' => 'lRange',
+        'lRemove' => 'lRem',
+        'lSize' => 'lLen',
+        'listTrim' => 'lTrim',
+        'open' => 'connect',
+        'popen' => 'pconnect',
+        'renameKey' => 'rename',
+        'sContains' => 'sIsMember',
+        'sGetMembers' => 'sMembers',
+        'sRemove' => 'sRem',
+        'sSize' => 'sCard',
+        'sendEcho' => 'echo',
+        'setTimeout' => 'expire',
+        'substr' => 'getRange',
+        'zDelete' => 'zRem',
+        'zDeleteRangeByRank' => 'zRemRangeByRank',
+        'zDeleteRangeByScore' => 'zRemRangeByScore',
+        'zInter' => 'zInterStore',
+        'zRemove' => 'zRem',
+        'zRemoveRangeByScore' => 'zRemRangeByScore',
+        'zReverseRange' => 'zRevRange',
+        'zSize' => 'zCard',
+        'zUnion' => 'zUnionStore'
+    ];
+
+    /* ------------------------------------ Class Constants END ---------------------------------------- */
+
     /* ------------------------------------ Class Property START --------------------------------------- */
     
     /**
@@ -106,6 +142,7 @@ class Connection implements \Maleficarum\Storage\Shard\ShardInterface {
             throw new \LogicException(sprintf('Cannot call method before connection initialization. \%s::__call()',static::class));
         }
 
+        $method = self::DEPRECATED_ALIASES_MAP[$method] ?? $method;
         if (!method_exists($connection, $method)) {
             throw new \LogicException(sprintf('Method "%s" does not exist. \%s::__call()', $method, static::class));
         }
