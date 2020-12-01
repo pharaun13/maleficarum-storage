@@ -3,6 +3,10 @@
 This component replaces the now obsolete Maleficarum Database compoment (https://github.com/pharaun13/maleficarum-database). All MSSQL code was removed and persistence layers were decoupled from actual model objects. Additionally generic Redis model/collection repository was implemented and provided as basis for project specific implementations.
 
 # Change Log
+## [4.0.0] - 2020-12-01
+### Changed
+- Handle deprecated methods (https://github.com/phpredis/phpredis/commit/95c8aab9#diff-a1471159ac00556a439382b010c89a8507ebc6f03311ec7655cebd95dc6c978eR443)
+
 ## [3.4.0] - 2020-05-14
 ## Added
 - Added selectable columns to postgresql collection
