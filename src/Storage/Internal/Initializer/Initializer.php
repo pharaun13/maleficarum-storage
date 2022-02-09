@@ -171,10 +171,10 @@ class Initializer {
                         || !count($config['storage']['redis_shard'])
                         || !isset($config['storage']['redis_shard_default'])
                     ) {
-                        throw new \RuntimeException(sprintf('Postgresql shards defined but routing was not properly defined. %s', static::class));
+                        throw new \RuntimeException(sprintf('Redis shards defined but routing was not properly defined. %s', static::class));
                     }
 
-                    // create and attach postgresql shards to the storage manager
+                    // create and attach redis shards to the storage manager
                     $connections = [];
                     foreach ($config['storage']['redis_shard'] as $route => $shard) {
                         // sanitize config parameters
