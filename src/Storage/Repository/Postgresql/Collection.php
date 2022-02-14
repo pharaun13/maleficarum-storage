@@ -137,8 +137,9 @@ class Collection implements \Maleficarum\Storage\Repository\CollectionInterface
             $sets[] = "(" . implode(', ', array_keys($result)) . ")";
 
             // append bind params
-            $params = array_merge($params, $result);
+            $params[] = $result;
         }
+        $params = array_merge(...$params);
         
         // generate SQL query
         $sql = 'INSERT INTO "' . $collection->getStorageGroup() . '" ("' . implode('", "', array_keys($data[0])) . '") VALUES ';
