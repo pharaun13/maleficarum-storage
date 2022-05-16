@@ -16,6 +16,8 @@ class Collection implements \Maleficarum\Storage\Repository\CollectionInterface
 
     /* ------------------------------------ Class Property START --------------------------------------- */
 
+    protected const ALLOWED_FILTERS = ['~', 'i'];
+
     /**
      * This is the definition of the shard selector function used by this repository. If set it will be
      * called to determine the shard route used for the data currently stored in the model object specified
@@ -225,7 +227,16 @@ class Collection implements \Maleficarum\Storage\Repository\CollectionInterface
     protected function getSelectableColumns(): array {
         return [];
     }
-    
+
+    /**
+     * Fetch a list of columns that can be used in where. Empty array means that no where columns are available for this collection.
+     *
+     * @return array
+     */
+    protected function getFilterColumns(): array {
+        return [];
+    }
+
     /* ------------------------------------ Class Methods END ------------------------------------------ */
 
     /* ------------------------------------ Populate Methods START ------------------------------------- */
@@ -265,21 +276,48 @@ class Collection implements \Maleficarum\Storage\Repository\CollectionInterface
         }
         
         // DISTINCT
-        if (array_key_exists('__distinct', $data)) is_array($data['__distinct']) && count($data['__distinct']) or $this->respondToInvalidArgument('Incorrect __distinct data. \%s::populate()');
-        
+        if (array_key_exists('__distinct', $data)) {
+            is_array($data['__distinct']) && count($data['__distinct']) or $this->respondToInvalidArgument('Incorrect __distinct data. \%s::populate()');
+            count(array_diff($data['__distinct'], $this->getSelectableColumns())) === 0 or $this->respondToInvalidArgument('Incorrect __distinct data. \%s::populate()');
+        }
+
         // SUM + COUNT
         if (array_key_exists('__count', $data) && array_key_exists('__sum', $data)) $this->respondToInvalidArgument('__count and __sum are mutually exclusive. \%s::populate()');
-        
+
         // COUNT
-        if (array_key_exists('__count', $data)) is_array($data['__count']) && count($data['__count']) or $this->respondToInvalidArgument('Incorrect __count data. \%s::populate()');
-        
-        // SUM 
-        if (array_key_exists('__sum', $data)) is_array($data['__sum']) && count($data['__sum']) or $this->respondToInvalidArgument('Incorrect __sum data. \%s::populate()');
+        if (array_key_exists('__count', $data)) {
+            is_array($data['__count']) && count($data['__count']) or $this->respondToInvalidArgument('Incorrect __count data. \%s::populate()');
+            count(array_diff($data['__count'], $this->getSelectableColumns())) === 0 or $this->respondToInvalidArgument('Incorrect __count data. \%s::populate()');
+        }
+
+        // SUM
+        if (array_key_exists('__sum', $data)) {
+            is_array($data['__sum']) && count($data['__sum']) or $this->respondToInvalidArgument('Incorrect __sum data. \%s::populate()');
+            count(array_diff($data['__sum'], $this->getSelectableColumns())) === 0 or $this->respondToInvalidArgument('Incorrect __sum data. \%s::populate()');
+        }
 
         // COLUMNS
         if (array_key_exists('__columns', $data)) {
             is_array($data['__columns']) && count($data['__columns']) or $this->respondToInvalidArgument('Incorrect __columns data. \%s::populate()');
             count(array_diff($data['__columns'], $this->getSelectableColumns())) === 0 or $this->respondToInvalidArgument('Unsupported columns provided. \%s::populate()');
+        }
+
+        // FILTERS
+        foreach ($data as $key => $_) {
+            if ($key[0] === '_' && $key[1]) continue;
+
+            $keyArr = explode('/', $key);
+
+            if (count($keyArr) === 2) {
+                in_array($keyArr[0], static::ALLOWED_FILTERS, true) or $this->respondToInvalidArgument('Incorrect filter data. \%s::populate()');
+                in_array($keyArr[1], $this->getFilterColumns(), true) or $this->respondToInvalidArgument('Incorrect filter data. \%s::populate()');
+            } elseif(count($keyArr) === 1) {
+                in_array($keyArr[0], $this->getFilterColumns(), true) or $this->respondToInvalidArgument('Incorrect filter data. \%s::populate()');
+            }
+            else {
+                $this->respondToInvalidArgument('Incorrect filter data. \%s::populate()');
+            }
+
         }
         
         return $this;
